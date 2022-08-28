@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npx tsc",
     "lint": "eslint",
-    "dev": "nodemon index.ts",
+    "dev": "nodemon src/index.ts",
     "prepare": "cd ../ && husky install ./server/.husky",
     "pre-commit": "lint-staged"
   },
