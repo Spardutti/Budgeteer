@@ -1,10 +1,31 @@
 {
   "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
     "target": "es2016" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
-    "module": "commonjs" /* Specify what module code is generated. */,
+    "module": "CommonJS" /* Specify what module code is generated. */,
     "moduleResolution": "node" /* Specify how TypeScript looks up a file from a given module specifier. */,
-    "baseUrl": "." /* Specify the base directory to resolve non-relative module names. */,
-    "paths": {} /* Specify a set of entries that re-map imports to additional lookup locations. */,
+    "baseUrl": "./src" /* Specify the base directory to resolve non-relative module names. */,
+    "paths": {
+      "@routes/*": [
+        "routes/*"
+      ],
+      "@config/*": [
+        "config/*"
+      ],
+      "@models/*": [
+        "models/*"
+      ],
+      "@controllers/*": [
+        "controllers/*"
+      ],
+      "@interface/*": [
+        "interface/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ],
+    } /* Specify a set of entries that re-map imports to additional lookup locations. */,
     "isolatedModules": true /* Ensure that each file can be safely transpiled without relying on other imports. */,
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
     "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
@@ -14,9 +35,8 @@
     "noImplicitThis": true /* Enable error reporting when 'this' is given the type 'any'. */,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "allowJs": true,
-    "noEmit": true,
     "resolveJsonModule": true,
     "incremental": true,
-    "tsBuildInfoFile": "./buildcache/.tsbuildinfo"
-  }
+    "tsBuildInfoFile": "./buildcache/.tsbuildinfo",
+  },
 }
