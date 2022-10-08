@@ -17,7 +17,8 @@
     "dev": "nodemon src/index.ts",
     "prepare": "cd ../ && husky install ./server/.husky",
     "pre-commit": "lint-staged",
-    "start": "node ./dist/index.js"
+    "start": "node ./dist/index.js",
+    "heroku-push": "cd ../ && git subtree push --prefix server origin heroku"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
