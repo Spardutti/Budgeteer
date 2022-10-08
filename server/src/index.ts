@@ -7,6 +7,7 @@ config();
 
 const port = process.env.PORT;
 const url = process.env.BE_URL;
+
 const server = new Hapi.Server({
     port,
     host: url,
