@@ -5,7 +5,6 @@
         "node": true
     },
     "extends": [
-        "plugin:import/recommended",
         "plugin:prettier/recommended",
         "plugin:react/recommended",
         "plugin:react-hooks/recommended"
@@ -14,7 +13,6 @@
         "react-hooks",
         "react",
         "prettier",
-        "import",
         "@typescript-eslint"
     ],
     "parser": "@typescript-eslint/parser",
@@ -33,6 +31,15 @@
             ]
         },
         "import/resolver": {
+            "node": {
+                "extensions": [
+                    ".ts"
+                ],
+                "moduleDirectory": [
+                    "node_modules",
+                    "src/"
+                ]
+            },
             "typescript": {}
         },
         "react": {
@@ -43,29 +50,6 @@
         "react/react-in-jsx-scope": "off",
         "import/no-unresolved": "off",
         "import/no-named-as-default": "off",
-        "import/order": [
-            "warn",
-            {
-                "groups": [
-                    "type",
-                    "builtin",
-                    "object",
-                    "external",
-                    "internal",
-                    "parent",
-                    "sibling",
-                    "index"
-                ],
-                "pathGroups": [
-                    {
-                        "pattern": "~/**",
-                        "group": "external",
-                        "position": "after"
-                    }
-                ],
-                "newlines-between": "always"
-            }
-        ],
         "@typescript-eslint/no-unused-vars": [
             "warn",
             {

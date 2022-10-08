@@ -1,16 +1,34 @@
-import express from "express";
+import "module-alias/register";
+import Hapi from "@hapi/hapi";
+import routes from "@routes/index";
+import sequelize from "@config/db.config";
 import { config } from "dotenv";
-
 config();
 
-const app = express();
-
 const port = process.env.PORT;
-
-app.get("/", (req, res) => {
-    res.send("Express + Ts Server");
+const server = new Hapi.Server({
+    port,
+    host: "localhost",
+    routes: {
+        cors: {
+            origin: ["*"], // an array of origins or 'ignore'
+        },
+    },
+    debug: { request: ["error"] },
 });
 
-app.listen(port, () => {
-    console.log(`[server]: Server is running at this port  ${port}`);
+const init = async () => {
+    routes(server);
+    await server.start();
+    await sequelize.sync();
+    console.log(`server running on port ${port}`);
+};
+
+process.on("unhandledRejection", (err) => {
+    console.log(err);
+    process.exit(1);
 });
+
+init();
+
+export default server;
