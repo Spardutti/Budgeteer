@@ -5,12 +5,11 @@ import sequelize from "@config/db.config";
 import { config } from "dotenv";
 config();
 
-const port = process.env.PORT;
 const url = process.env.BE_URL;
-
+const port = process.env.PROT || 5000;
 const server = new Hapi.Server({
+    host: "0.0.0.0",
     port,
-    host: url,
     routes: {
         cors: {
             origin: ["*"], // an array of origins or 'ignore'
@@ -23,7 +22,7 @@ const init = async () => {
     routes(server);
     await server.start();
     await sequelize.sync();
-    console.log(`server running on port ${port}`);
+    console.log(`server running on port ${port} `);
 };
 
 process.on("unhandledRejection", (err) => {
