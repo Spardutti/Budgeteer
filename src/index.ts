@@ -6,7 +6,7 @@ import { config } from "dotenv";
 config();
 
 const url = process.env.BE_URL;
-const port = process.env.PROT || 5000;
+const port = process.env.PORT || 5000;
 const server = new Hapi.Server({
     host: "0.0.0.0",
     port,
