@@ -12,11 +12,12 @@
     "@utils": "src/utils"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "lint": "eslint",
     "dev": "nodemon src/index.ts",
     "prepare": "cd ../ && husky install ./server/.husky",
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
+    "start": "node ./dist/index.js"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
@@ -42,7 +43,8 @@
     "morgan": "^1.10.0",
     "nodemon": "^2.0.19",
     "pg": "^8.8.0",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "tsc-alias": "^1.7.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
