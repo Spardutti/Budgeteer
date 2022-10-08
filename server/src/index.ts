@@ -6,9 +6,10 @@ import { config } from "dotenv";
 config();
 
 const port = process.env.PORT;
+const url = process.env.BE_URL;
 const server = new Hapi.Server({
     port,
-    host: "localhost",
+    host: url,
     routes: {
         cors: {
             origin: ["*"], // an array of origins or 'ignore'
