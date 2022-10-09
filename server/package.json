@@ -68,5 +68,10 @@
     "pg-hstore": "^2.3.4",
     "prettier": "^2.7.1",
     "typescript": "^4.8.4"
-  }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
+  },
 }
