@@ -1,95 +1,57 @@
-import { Op } from "sequelize";
 import { IncomeInterface } from "@interface/interfaces";
-import Income from "@models/income/income";
+import Income from "@models/Income";
 import { Request } from "hapi";
 import { DateTime } from "luxon";
-import { newWeek } from "@utils/newWeek";
 
-const createIncome = async (request: Request) => {
+// ** POST ** //
+const createUserIncome = async (request: Request) => {
     try {
-        const { ammount, user } = request.payload as IncomeInterface;
-        const exist = await Income.findOne({
-            where: { user: { [Op.iLike]: user } },
-        });
-        const date = DateTime.now();
-        const year = date.year;
-        const month = date.month;
+        const { userId, familyId, amount } = request.payload as IncomeInterface;
+        const month = DateTime.now().month;
+        const year = DateTime.now().year;
 
-        if (exist) return { msg: "Income already exist", status: 400 };
-        const data = await Income.create({ user, ammount, month, year });
+        if (userId) {
+            const exist = await Income.findOne({
+                where: {
+                    userId,
+                    month,
+                    year,
+                },
+            });
 
-        return { status: 200, data };
-    } catch (error) {
-        return error;
-    }
-};
-
-const createNewMonthIncome = async () => {
-    const month = DateTime.now().month;
-    const year = DateTime.now().year;
-
-    try {
-        const oldIncomes = await Income.findOne({
-            where: {
-                month,
-                year,
-            },
-        });
-
-        if (oldIncomes) return { status: 400, msg: "Income exist" };
-        const incomeToCreate = await Income.findAll({
-            attributes: ["user"],
-            group: ["user"],
-        });
-        const newIncomes: Income[] = [];
-
-        for (const i of incomeToCreate) {
+            if (exist) return { status: 400, err: "Income already exists" };
             const income = await Income.create({
-                user: i.user,
+                amount,
+                userId,
                 month,
-                ammount: 0,
                 year,
             });
 
-            newIncomes.push(income);
+            return { status: 200, income };
+        } else {
+            const exist = await Income.findOne({
+                where: {
+                    familyId,
+                    month,
+                    year,
+                },
+            });
+
+            if (exist) return { status: 400, err: "Income already exists" };
+            const income = await Income.create({
+                amount,
+                familyId,
+                month,
+                year,
+            });
+
+            return { status: 200, income };
         }
-        const newWeeklies = await newWeek();
-
-        return {
-            status: 200,
-            msg: "New Monthly income created",
-            weeklies: newWeeklies?.weeklies,
-            incomes: newIncomes,
-        };
-    } catch (error) {
-        return error;
-    }
-};
-
-const decrementIncomeAmmount = async (request: Request) => {
-    interface EditAmmount {
-        id: number;
-        ammount: number;
-    }
-    const values = request.payload as EditAmmount;
-
-    try {
-        const user = await Income.findByPk(values.id);
-
-        user
-            ? await user.decrement("ammount", {
-                  by: values.ammount,
-              })
-            : { msg: "User not found", status: 400 };
-
-        return user;
-    } catch (error) {
-        return error;
+    } catch (err) {
+        return { status: 400, err: (err as Error).message };
     }
 };
 
 export const incomeController = {
-    createIncome,
-    createNewMonthIncome,
-    decrementIncomeAmmount,
+    createUserIncome,
 };

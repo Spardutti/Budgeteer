@@ -3,6 +3,8 @@ import {
     InferAttributes,
     InferCreationAttributes,
     DataTypes,
+    CreationOptional,
+    ForeignKey,
 } from "sequelize";
 import sequelize from "@config/db.config";
 
@@ -10,22 +12,24 @@ class Income extends Model<
     InferAttributes<Income>,
     InferCreationAttributes<Income>
 > {
-    declare user: string;
-    declare ammount: number;
+    declare id: CreationOptional<number>;
+    declare userId: CreationOptional<ForeignKey<number>>;
+    declare familyId: CreationOptional<ForeignKey<number>>;
+    declare amount: number;
     declare month: number;
-    declare id?: number;
     declare year: number;
 }
 
 Income.init(
     {
-        user: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        ammount: {
+        amount: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+        },
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+            unique: true,
         },
         month: {
             type: DataTypes.INTEGER,
@@ -34,12 +38,6 @@ Income.init(
         year: {
             type: DataTypes.INTEGER,
             allowNull: false,
-        },
-        id: {
-            type: DataTypes.INTEGER,
-            unique: true,
-            autoIncrement: true,
-            primaryKey: true,
         },
     },
     {

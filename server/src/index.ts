@@ -21,7 +21,7 @@ const server = new Hapi.Server({
 const init = async () => {
     routes(server);
     await server.start();
-    await sequelize.sync();
+    // await sequelize.sync({ alter: true });
     console.log(`server running on port ${port} `);
 };
 

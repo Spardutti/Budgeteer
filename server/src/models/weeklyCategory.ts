@@ -3,22 +3,25 @@ import {
     InferAttributes,
     InferCreationAttributes,
     DataTypes,
+    CreationOptional,
+    ForeignKey,
 } from "sequelize";
 import sequelize from "@config/db.config";
 
-class Weekly extends Model<
-    InferAttributes<Weekly>,
-    InferCreationAttributes<Weekly>
+class WeeklyCategory extends Model<
+    InferAttributes<WeeklyCategory>,
+    InferCreationAttributes<WeeklyCategory>
 > {
     declare name: string;
     declare ammount: number;
     declare week: number;
     declare month: number;
-    declare id?: number;
     declare year: number;
+    declare id: CreationOptional<number>;
+    declare userId: ForeignKey<number>;
 }
 
-Weekly.init(
+WeeklyCategory.init(
     {
         name: {
             type: DataTypes.STRING,
@@ -49,8 +52,8 @@ Weekly.init(
     },
     {
         sequelize,
-        tableName: "Weekly",
+        tableName: "Weekly Category",
     }
 );
 
-export default Weekly;
+export default WeeklyCategory;
