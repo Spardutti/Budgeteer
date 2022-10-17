@@ -31,7 +31,6 @@ const createUserIncome = async (request: Request) => {
         } else {
             const exist = await Income.findOne({
                 where: {
-                    familyId,
                     month,
                     year,
                 },
@@ -40,7 +39,6 @@ const createUserIncome = async (request: Request) => {
             if (exist) return { status: 400, err: "Income already exists" };
             const income = await Income.create({
                 amount,
-                familyId,
                 month,
                 year,
             });
