@@ -6,7 +6,7 @@ import { DateTime } from "luxon";
 // ** POST ** //
 const createUserIncome = async (request: Request) => {
     try {
-        const { userId, familyId, amount } = request.payload as IncomeInterface;
+        const { userId, amount } = request.payload as IncomeInterface;
         const month = DateTime.now().month;
         const year = DateTime.now().year;
 
