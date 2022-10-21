@@ -1,59 +1,58 @@
+import WeeklyExpense from "@models/WeeklyExpense";
+// import {
+//     Model,
+//     InferAttributes,
+//     InferCreationAttributes,
+//     DataTypes,
+//     CreationOptional,
+//     ForeignKey,
+// } from "sequelize";
+// import sequelize from "@config/db.config";
+
+import { WeeklyCategoryInterface } from "@interface/interfaces";
+import { Optional } from "sequelize";
 import {
-    Model,
-    InferAttributes,
-    InferCreationAttributes,
-    DataTypes,
-    CreationOptional,
+    BelongsTo,
+    BelongsToMany,
+    Column,
     ForeignKey,
-} from "sequelize";
-import sequelize from "@config/db.config";
+    Model,
+    Table,
+} from "sequelize-typescript";
+import User from "./user";
 
+interface WeeklyCategoryAttributes
+    extends Optional<WeeklyCategoryInterface, "id"> {}
+
+@Table
 class WeeklyCategory extends Model<
-    InferAttributes<WeeklyCategory>,
-    InferCreationAttributes<WeeklyCategory>
+    WeeklyCategoryInterface,
+    WeeklyCategoryAttributes
 > {
-    declare name: string;
-    declare ammount: number;
-    declare week: number;
-    declare month: number;
-    declare year: number;
-    declare id: CreationOptional<number>;
-    declare userId: ForeignKey<number>;
-}
+    @Column
+    name!: string;
 
-WeeklyCategory.init(
-    {
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        ammount: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        week: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        month: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        year: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        id: {
-            type: DataTypes.INTEGER,
-            unique: true,
-            autoIncrement: true,
-            primaryKey: true,
-        },
-    },
-    {
-        sequelize,
-        tableName: "Weekly Category",
-    }
-);
+    @Column
+    year!: number;
+
+    @Column
+    month!: number;
+
+    @Column
+    week!: number;
+
+    @Column
+    ammount!: number;
+
+    @BelongsTo(() => User)
+    userInfo!: User;
+
+    @ForeignKey(() => User)
+    @Column
+    userId!: number;
+
+    @BelongsToMany(() => User, () => WeeklyExpense)
+    expense!: WeeklyExpense[];
+}
 
 export default WeeklyCategory;

@@ -1,4 +1,3 @@
-import FamiliyUser from "@models/FamilyUser";
 import { Op } from "sequelize";
 import { UserInterface } from "@interface/interfaces";
 import User from "@models/user";
@@ -23,20 +22,6 @@ const getUser = async (request: Request) => {
     }
 };
 
-const getUserFamily = async (request: Request) => {
-    try {
-        const { userId } = request.query;
-        const family = await FamiliyUser.findAll({
-            where: {
-                userId,
-            },
-        });
-
-        return { status: 200, family };
-    } catch (err) {
-        return { status: 400, err: (err as Error).message };
-    }
-};
 // ** POST  ** //
 const createUser = async (request: Request) => {
     try {
@@ -163,5 +148,4 @@ export const userController = {
     // decrementIncomeAmmount,
     // getMonthIncome,
     getUser,
-    getUserFamily,
 };

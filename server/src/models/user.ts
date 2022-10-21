@@ -1,34 +1,30 @@
+import WeeklyExpense from "@models/WeeklyExpense";
+import WeeklyCategory from "@models/weeklyCategory";
+import { UserInterface } from "@interface/interfaces";
+import { Optional } from "sequelize";
 import {
+    Column,
+    HasMany,
+    Table,
     Model,
-    InferAttributes,
-    InferCreationAttributes,
-    DataTypes,
-    CreationOptional,
-} from "sequelize";
-import sequelize from "@config/db.config";
+    BelongsToMany,
+} from "sequelize-typescript";
+import Income from "./Income";
 
-class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
-    declare name: string;
-    declare id: CreationOptional<number>;
+interface UserCreationAttributes extends Optional<UserInterface, "id"> {}
+@Table
+class User extends Model<UserInterface, UserCreationAttributes> {
+    @Column
+    name!: string;
+
+    @HasMany(() => Income)
+    income!: Income[];
+
+    @HasMany(() => WeeklyCategory)
+    weeklyCategory!: WeeklyCategory[];
+
+    @BelongsToMany(() => WeeklyCategory, () => WeeklyExpense)
+    expense!: WeeklyExpense[];
 }
-
-User.init(
-    {
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        id: {
-            type: DataTypes.INTEGER,
-            unique: true,
-            autoIncrement: true,
-            primaryKey: true,
-        },
-    },
-    {
-        sequelize,
-        tableName: "User",
-    }
-);
 
 export default User;

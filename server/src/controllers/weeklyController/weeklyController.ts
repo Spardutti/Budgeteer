@@ -1,20 +1,20 @@
 import User from "@models/user";
 import { weekOfMonth } from "@utils/weekOfMonth";
-import sequelize from "@config/db.config";
 import { WeeklyCategoryInterface } from "@interface/interfaces";
-import models from "@models/index";
 import { Request } from "hapi";
 import { DateTime } from "luxon";
 import { Op } from "sequelize";
 import { newWeek } from "@utils/newWeek";
+import WeeklyCategory from "@models/weeklyCategory";
+import WeeklyExpense from "@models/WeeklyExpense";
 
 // ** GET ** //
 const getWeekly = async (request: Request) => {
     try {
         const { userId } = request.query;
-        const data = await models.WeeklyCategory.findAll({
+        const data = await WeeklyCategory.findAll({
             where: { userId },
-            include: User,
+            include: [{ model: User, as: "userInfo" }],
         });
 
         return {
@@ -30,14 +30,14 @@ const getWeekliesByDate = async (request: Request) => {
     const { month, year, week, userId } = request.query;
 
     try {
-        const data = await models.WeeklyCategory.findAll({
+        const data = await WeeklyCategory.findAll({
             where: {
                 month,
                 year,
                 week,
                 userId,
             },
-            include: User,
+            include: [{ model: User, as: "userInfo" }],
         });
 
         return { status: 200, weeklies: data };
@@ -58,13 +58,13 @@ const addWeekly = async (request: Request) => {
     const weekNumber = weekOfMonth();
 
     try {
-        const week = await models.WeeklyCategory.findOne({
+        const week = await WeeklyCategory.findOne({
             // case insensitive search Op.iLike
             where: { name: { [Op.iLike]: name } },
         });
 
         if (week) return { msg: "That name is already in use", status: 400 };
-        const weeklyCategory = await models.WeeklyCategory.create({
+        const weeklyCategory = await WeeklyCategory.create({
             name,
             ammount,
             month,
@@ -72,7 +72,7 @@ const addWeekly = async (request: Request) => {
             year,
             userId,
         });
-        const weeklyExpense = await models.WeeklyExpense.create({
+        const weeklyExpense = await WeeklyExpense.create({
             userId,
             weeklyCategoryId: weeklyCategory.id,
             amount: 0,
@@ -84,7 +84,6 @@ const addWeekly = async (request: Request) => {
     }
 };
 
-// TODO REVIEW THIS LOGIC WITH NEW USER/INCOME MODEL
 // ? this will create all WeeklyCategories for each user when a new week starts
 const createNewWeek = async (request: Request) => {
     interface UserId {
@@ -110,7 +109,7 @@ const createNewWeek = async (request: Request) => {
 //         request.payload as AddAmmount;
 
 //     try {
-//         const weekly = await models.WeeklyCategory.findByPk(weeklyId);
+//         const weekly = await WeeklyCategory.findByPk(weeklyId);
 //         const user = await User.findByPk(userId);
 
 //         if (!weekly || !user) return { msg: "Income not found", status: 400 };
@@ -129,22 +128,10 @@ const createNewWeek = async (request: Request) => {
 //     }
 // };
 
-const dropTables = async () => {
-    try {
-        await sequelize.drop({ cascade: true });
-        await sequelize.sync({ alter: true });
-
-        return "Tables Dropped";
-    } catch (err) {
-        return { status: 400, error: (err as Error).message };
-    }
-};
-
 export const weeklyController = {
     getWeekly,
     addWeekly,
     // addWeeklyAmmount,
-    dropTables,
     createNewWeek,
     getWeekliesByDate,
 };

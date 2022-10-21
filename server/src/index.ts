@@ -1,11 +1,12 @@
 import "module-alias/register";
 import Hapi from "@hapi/hapi";
-import routes from "@routes/index";
-import sequelize from "@config/db.config";
+import incomeRoutes from "@routes/incomeRoutes";
+import userRoutes from "@routes/userRoutes";
+import weeklyCategoriesRoutes from "@routes/weeklyRoutes";
+import etcRoutes from "@routes/etc";
 import { config } from "dotenv";
 config();
 
-const url = process.env.BE_URL;
 const port = process.env.PORT || 5000;
 const server = new Hapi.Server({
     host: "0.0.0.0",
@@ -19,9 +20,11 @@ const server = new Hapi.Server({
 });
 
 const init = async () => {
-    routes(server);
+    incomeRoutes(server);
+    weeklyCategoriesRoutes(server);
+    userRoutes(server);
+    etcRoutes(server);
     await server.start();
-    // await sequelize.sync({ alter: true });
     console.log(`server running on port ${port} `);
 };
 

@@ -1,49 +1,34 @@
+import { Optional } from "sequelize";
 import {
-    Model,
-    InferAttributes,
-    InferCreationAttributes,
-    DataTypes,
-    CreationOptional,
+    Table,
+    Column,
+    DataType,
+    BelongsTo,
     ForeignKey,
-} from "sequelize";
-import sequelize from "@config/db.config";
+    Model,
+} from "sequelize-typescript";
+import { IncomeInterface } from "@interface/interfaces";
+import User from "./user";
 
-class Income extends Model<
-    InferAttributes<Income>,
-    InferCreationAttributes<Income>
-> {
-    declare id: CreationOptional<number>;
-    declare userId: CreationOptional<ForeignKey<number>>;
-    declare familyId: CreationOptional<ForeignKey<number>>;
-    declare amount: number;
-    declare month: number;
-    declare year: number;
+interface IncomeCreationAttributes extends Optional<IncomeInterface, "id"> {}
+
+@Table
+class Income extends Model<IncomeInterface, IncomeCreationAttributes> {
+    @Column(DataType.INTEGER)
+    amount!: number;
+
+    @Column(DataType.INTEGER)
+    month!: number;
+
+    @Column(DataType.INTEGER)
+    year!: number;
+
+    @ForeignKey(() => User)
+    @Column
+    userId!: number;
+
+    @BelongsTo(() => User)
+    user!: User;
 }
-
-Income.init(
-    {
-        amount: {
-            type: DataTypes.INTEGER,
-        },
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true,
-            unique: true,
-        },
-        month: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        year: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-    },
-    {
-        sequelize,
-        tableName: "Income",
-    }
-);
 
 export default Income;

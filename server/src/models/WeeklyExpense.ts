@@ -1,55 +1,48 @@
-import WeeklyCategory from "@models/weeklyCategory";
-import sequelize from "@config/db.config";
+// import WeeklyCategory from "@models/weeklyCategory";
+// import sequelize from "@config/db.config";
+// import {
+//     CreationOptional,
+//     DataTypes,
+//     InferAttributes,
+//     InferCreationAttributes,
+//     Model,
+// } from "sequelize";
+// import User from "./user";
+
+import { WeeklyExpenseInterface } from "@interface/interfaces";
+import { Optional } from "sequelize";
 import {
-    CreationOptional,
-    DataTypes,
-    InferAttributes,
-    InferCreationAttributes,
+    Column,
+    ForeignKey,
     Model,
-} from "sequelize";
+    PrimaryKey,
+    Table,
+} from "sequelize-typescript";
 import User from "./user";
+import WeeklyCategory from "./weeklyCategory";
 
+interface WeeklyExpenseAttributes
+    extends Optional<WeeklyExpenseInterface, "id"> {}
+
+@Table
 class WeeklyExpense extends Model<
-    InferAttributes<WeeklyExpense>,
-    InferCreationAttributes<WeeklyExpense>
+    WeeklyExpenseInterface,
+    WeeklyExpenseAttributes
 > {
-    declare weeklyCategoryId: number;
-    declare userId: number;
-    declare amount: number;
-    declare id: CreationOptional<number>;
-}
+    @PrimaryKey
+    @Column({ autoIncrement: true, unique: true })
+    id!: number;
 
-WeeklyExpense.init(
-    {
-        amount: {
-            type: DataTypes.INTEGER,
-        },
-        id: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            unique: true,
-            autoIncrement: true,
-            primaryKey: true,
-        },
-        weeklyCategoryId: {
-            type: DataTypes.INTEGER,
-            references: {
-                model: WeeklyCategory,
-                key: "id",
-            },
-        },
-        userId: {
-            type: DataTypes.INTEGER,
-            references: {
-                model: User,
-                key: "id",
-            },
-        },
-    },
-    {
-        sequelize,
-        tableName: "Weekly Expense",
-    }
-);
+    @Column
+    amount!: number;
+
+    @ForeignKey(() => User)
+    @Column
+    userId!: number;
+
+    @ForeignKey(() => WeeklyCategory)
+    @Column
+    weeklyCategoryId!: number;
+}
 
 export default WeeklyExpense;

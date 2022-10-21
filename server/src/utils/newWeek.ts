@@ -1,7 +1,8 @@
 import { weekOfMonth } from "@utils/weekOfMonth";
 import WeeklyCategory from "@models/weeklyCategory";
 import { DateTime } from "luxon";
-import User from "@models/user";
+import WeeklyExpense from "@models/WeeklyExpense";
+import sequelize from "@config/db.config";
 
 export const newWeek = async (userId: number) => {
     try {
@@ -18,21 +19,28 @@ export const newWeek = async (userId: number) => {
             },
         });
 
+        // ? if the week exist we do nothing
         if (weeklies) {
             return { status: 400, msg: "week already exist" };
         }
+
+        // ? we get all the existing caregories for the user
         const oldWeeklies = await WeeklyCategory.findAll({
             where: { userId },
-            attributes: ["name"],
-            group: ["name"],
+            attributes: [
+                [sequelize.fn("DISTINCT", sequelize.col("name")), "name"],
+                "id",
+            ],
         });
 
         let newWeeklies: WeeklyCategory[] = [];
+        let newExpenses: WeeklyExpense[] = [];
 
+        // ? we create a the old category with the new week number
         if (oldWeeklies) {
-            for (const week of oldWeeklies) {
-                const data = await WeeklyCategory.create({
-                    name: week.name,
+            for (const weekly of oldWeeklies) {
+                const newWeekly = WeeklyCategory.build({
+                    name: weekly.name,
                     ammount: 0,
                     week: weekNumber,
                     month,
@@ -40,11 +48,21 @@ export const newWeek = async (userId: number) => {
                     userId,
                 });
 
-                newWeeklies.push(data);
+                const weeklyExpense = WeeklyExpense.build({
+                    userId,
+                    weeklyCategoryId: newWeekly.id,
+                    amount: 0,
+                });
+
+                newExpenses.push(weeklyExpense);
+                newWeeklies.push(newWeekly);
+                // ? wait until everything succeeded to save & avoid errors
+                newWeekly.save();
+                weeklyExpense.save();
             }
         }
 
-        return { status: 200, weeklies: newWeeklies };
+        return { status: 200, weeklies: newWeeklies, expenses: newExpenses };
     } catch (err) {
         return { status: 400, error: (err as Error).message };
     }
